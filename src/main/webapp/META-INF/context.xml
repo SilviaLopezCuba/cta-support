@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Context path="/pro">
+  <!--
+        Pool de conexiones JDBC administrado por Tomcat.
+        Antes: config/conexion.jsp abría una conexión NUEVA con DriverManager
+        en cada request y nunca la cerraba (0 archivos hacían conexion.close()
+        en todo el proyecto). Eso agotaba max_connections de Postgres
+        ("FATAL: sorry, too many clients already") con poco uso concurrente.
+        Ahora: el pool crea un número acotado de conexiones reales y las
+        reutiliza; conexion.jsp solo "pide prestada" una del pool y
+        cada página debe devolverla con conexion.close() al terminar
+        (con el pool, close() NO cierra la conexión física: solo la
+        devuelve para que otro request la reuse).
+    -->
+  <Resource auth="Container" driverClassName="org.postgresql.Driver" logAbandoned="true" maxIdle="10" maxTotal="30" maxWaitMillis="10000" minIdle="2" name="jdbc/ProyectofinalDB" password="TU_CONTRASENA" removeAbandonedOnBorrow="true" removeAbandonedTimeout="60" testOnBorrow="true" type="javax.sql.DataSource" url="jdbc:postgresql://localhost:5432/Proyectofinal" username="postgres" validationQuery="SELECT 1"/>
+</Context>

@@ -1,0 +1,55 @@
+/* CTA SUPPORT - Skeletons de carga. Usa los tokens de cta-tokens.css. */
+
+@keyframes cta-pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: .55; }
+}
+
+/* Bloque suelto (texto, avatar, tarjeta): <span class="cta-skeleton cta-skeleton-text"></span> */
+.cta-skeleton {
+    display: block;
+    background: var(--cta-skel-base);
+    border-radius: var(--cta-radius-sm);
+    animation: cta-pulse 1.4s ease-in-out infinite;
+}
+.cta-skeleton-text { height: 1em; width: 100%; }
+.cta-skeleton-text.w-25 { width: 25%; }
+.cta-skeleton-text.w-50 { width: 50%; }
+.cta-skeleton-text.w-75 { width: 75%; }
+
+/* Filas de tabla generadas por CTA.skeleton.show('#idTbody') */
+.cta-skeleton-tr td { padding: var(--cta-space-3); }
+.cta-skeleton-tr td > span { display: block; height: 1em; }
+
+/* Carga inicial de página: cta-ui.js agrega la clase "cta-loading" al <html> antes del primer
+   pintado y la quita cuando la página terminó de iniciar (DataTables, combos, etc.).
+   Mientras tanto, el contenido de las tarjetas se oculta y se muestra un esqueleto de filas. */
+html.cta-loading .content-wrapper .card-body {
+    position: relative;
+    min-height: 11rem;
+}
+html.cta-loading .content-wrapper .card-body > * { visibility: hidden; }
+html.cta-loading .content-wrapper .card-body::before {
+    content: "";
+    position: absolute;
+    top: var(--cta-space-4);
+    left: var(--cta-space-4);
+    right: var(--cta-space-4);
+    height: 8rem;
+    background: repeating-linear-gradient(
+        to bottom,
+        var(--cta-skel-base) 0, var(--cta-skel-base) 1.25rem,
+        transparent 1.25rem, transparent 2rem);
+    border-radius: var(--cta-radius-sm);
+    animation: cta-pulse 1.4s ease-in-out infinite;
+}
+html.cta-loading .small-box,
+html.cta-loading .info-box {
+    background: var(--cta-skel-base) !important;
+    animation: cta-pulse 1.4s ease-in-out infinite;
+}
+html.cta-loading .small-box > *,
+html.cta-loading .info-box > * { visibility: hidden; }
+
+/* Un contenedor puntual en carga: CTA.skeleton.show('#panel') */
+[aria-busy="true"].cta-skeleton-host { position: relative; min-height: 4rem; }

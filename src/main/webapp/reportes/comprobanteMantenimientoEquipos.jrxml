@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports"
+              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd"
+              name="comprobanteMantenimientoEquipos" language="groovy" pageWidth="535" pageHeight="842" columnWidth="535"
+              leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" whenNoDataType="NoDataSection" isIgnorePagination="true">
+	<style name="base" isDefault="true" fontName="SansSerif" fontSize="9" forecolor="#1E2B45" pdfEncoding="Cp1252"/>
+	<parameter name="ID_MANTENIMIENTO" class="java.lang.Integer"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String"/>
+	<queryString><![CDATA[SELECT d.id_detalle, e.codigo_patrimonial || ' - ' || COALESCE(e.modelo, 'Equipo General') AS equipo, mk.nombre_marca, d.realizado, d.observacion
+ FROM public.mantenimientos_preventivos_detalle d JOIN public.equipos e ON d.id_equipo = e.id_equipo LEFT JOIN public.marcas mk ON e.id_marca = mk.id_marca
+ WHERE d.id_mantenimiento = $P{ID_MANTENIMIENTO} ORDER BY e.codigo_patrimonial]]></queryString>
+	<field name="id_detalle" class="java.lang.Integer"/>
+	<field name="equipo" class="java.lang.String"/>
+	<field name="nombre_marca" class="java.lang.String"/>
+	<field name="realizado" class="java.lang.Boolean"/>
+	<field name="observacion" class="java.lang.String"/>
+	<detail><band height="50" splitType="Stretch">
+<textField textAdjust="StretchHeight" isBlankWhenNull="true"><reportElement x="0" y="0" width="400" height="16" positionType="Float" mode="Opaque" backcolor="#F3F5F8"/><box topPadding="2" leftPadding="6" bottomPadding="2" rightPadding="6"><bottomPen lineWidth="0.5" lineColor="#DDE2EA"/></box><textElement textAlignment="Left" verticalAlignment="Middle"><font size="9" isBold="true" isItalic="false" pdfEncoding="Cp1252"/></textElement><textFieldExpression><![CDATA[$F{equipo} + ($F{nombre_marca} != null ? "  (" + $F{nombre_marca} + ")" : "")]]></textFieldExpression></textField>
+<textField isBlankWhenNull="true"><reportElement x="400" y="0" width="135" height="16" positionType="Float" mode="Opaque" backcolor="#F3F5F8"/><box topPadding="2" leftPadding="6" bottomPadding="2" rightPadding="6"><bottomPen lineWidth="0.5" lineColor="#DDE2EA"/></box><textElement textAlignment="Center" verticalAlignment="Middle"><font size="9" isBold="true" isItalic="false" pdfEncoding="Cp1252"/></textElement><textFieldExpression><![CDATA[Boolean.TRUE.equals($F{realizado}) ? "Realizado" : "Pendiente"]]></textFieldExpression></textField>
+<textField textAdjust="StretchHeight" isBlankWhenNull="true"><reportElement x="0" y="16" width="535" height="14" positionType="Float"/><box topPadding="2" leftPadding="6" bottomPadding="2" rightPadding="6"><bottomPen lineWidth="0.5" lineColor="#DDE2EA"/></box><textElement textAlignment="Left" verticalAlignment="Top"><font size="8" isBold="false" isItalic="false" pdfEncoding="Cp1252"/></textElement><textFieldExpression><![CDATA["Observación: " + (($F{observacion} != null && !$F{observacion}.trim().isEmpty()) ? $F{observacion} : "-")]]></textFieldExpression></textField>
+<subreport><reportElement x="0" y="30" width="535" height="18" positionType="Float"/><subreportParameter name="ID_DETALLE"><subreportParameterExpression><![CDATA[$F{id_detalle}]]></subreportParameterExpression></subreportParameter><connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression><subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "comprobanteMantenimientoMateriales.jasper"]]></subreportExpression></subreport>
+	</band></detail>
+	<noData><band height="18">
+<staticText><reportElement x="0" y="0" width="535" height="18" positionType="FixRelativeToTop" forecolor="#56637A"/><box topPadding="2" leftPadding="6" bottomPadding="2" rightPadding="6"><bottomPen lineWidth="0.5" lineColor="#DDE2EA"/></box><textElement textAlignment="Left" verticalAlignment="Middle"><font size="8" isBold="false" isItalic="false" pdfEncoding="Cp1252"/></textElement><text><![CDATA[Sin equipos registrados.]]></text></staticText>
+	</band></noData>
+</jasperReport>

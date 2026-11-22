@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports"
+              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd"
+              name="comprobanteTicketMateriales" language="groovy" pageWidth="535" pageHeight="842" columnWidth="535"
+              leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" whenNoDataType="NoDataSection" isIgnorePagination="true">
+	<style name="base" isDefault="true" fontName="SansSerif" fontSize="9" forecolor="#1E2B45" pdfEncoding="Cp1252"/>
+	<parameter name="ID_TICKET" class="java.lang.Integer"/>
+	<queryString><![CDATA[SELECT CASE WHEN tr.id_repuesto IS NOT NULL THEN 'Repuesto' ELSE 'Insumo' END AS categoria, COALESCE(r.nombre, i.nombre) AS descripcion,
+ tr.cantidad FROM public.ticket_repuesto tr
+ LEFT JOIN public.catalogo_repuestos r ON tr.id_repuesto = r.id_repuesto LEFT JOIN public.catalogo_insumos i ON tr.id_insumo = i.id_insumo
+ WHERE tr.id_ticket = $P{ID_TICKET} ORDER BY tr.id]]></queryString>
+	<field name="categoria" class="java.lang.String"/>
+	<field name="descripcion" class="java.lang.String"/>
+	<field name="cantidad" class="java.math.BigDecimal"/>
+	<columnHeader><band height="18">
+<staticText><reportElement x="0" y="0" width="100" height="18" positionType="FixRelativeToTop" forecolor="#FFFFFF" mode="Opaque" backcolor="#14284B"/><box leftPadding="6" rightPadding="6"/><textElement textAlignment="Center" verticalAlignment="Middle"><font size="8" isBold="true" isItalic="false" pdfEncoding="Cp1252"/></textElement><text><![CDATA[Categoría]]></text></staticText>
+<staticText><reportElement x="100" y="0" width="335" height="18" positionType="FixRelativeToTop" forecolor="#FFFFFF" mode="Opaque" backcolor="#14284B"/><box leftPadding="6" rightPadding="6"/><textElement textAlignment="Center" verticalAlignment="Middle"><font size="8" isBold="true" isItalic="false" pdfEncoding="Cp1252"/></textElement><text><![CDATA[Descripción]]></text></staticText>
+<staticText><reportElement x="435" y="0" width="100" height="18" positionType="FixRelativeToTop" forecolor="#FFFFFF" mode="Opaque" backcolor="#14284B"/><box leftPadding="6" rightPadding="6"/><textElement textAlignment="Center" verticalAlignment="Middle"><font size="8" isBold="true" isItalic="false" pdfEncoding="Cp1252"/></textElement><text><![CDATA[Cant.]]></text></staticText>
+	</band></columnHeader>
+	<detail><band height="16" splitType="Stretch">
+<textField textAdjust="StretchHeight" isBlankWhenNull="true"><reportElement x="0" y="0" width="100" height="16" positionType="FixRelativeToTop" stretchType="RelativeToTallestObject"/><box topPadding="2" leftPadding="6" bottomPadding="2" rightPadding="6"><bottomPen lineWidth="0.5" lineColor="#DDE2EA"/></box><textElement textAlignment="Left" verticalAlignment="Middle"><font size="8" isBold="false" isItalic="false" pdfEncoding="Cp1252"/></textElement><textFieldExpression><![CDATA[($F{categoria} != null && !$F{categoria}.toString().trim().isEmpty()) ? $F{categoria}.toString() : "-"]]></textFieldExpression></textField>
+<textField textAdjust="StretchHeight" isBlankWhenNull="true"><reportElement x="100" y="0" width="335" height="16" positionType="FixRelativeToTop" stretchType="RelativeToTallestObject"/><box topPadding="2" leftPadding="6" bottomPadding="2" rightPadding="6"><bottomPen lineWidth="0.5" lineColor="#DDE2EA"/></box><textElement textAlignment="Left" verticalAlignment="Middle"><font size="8" isBold="false" isItalic="false" pdfEncoding="Cp1252"/></textElement><textFieldExpression><![CDATA[($F{descripcion} != null && !$F{descripcion}.toString().trim().isEmpty()) ? $F{descripcion}.toString() : "-"]]></textFieldExpression></textField>
+<textField textAdjust="StretchHeight" isBlankWhenNull="true" pattern="#,##0"><reportElement x="435" y="0" width="100" height="16" positionType="FixRelativeToTop" stretchType="RelativeToTallestObject"/><box topPadding="2" leftPadding="6" bottomPadding="2" rightPadding="6"><bottomPen lineWidth="0.5" lineColor="#DDE2EA"/></box><textElement textAlignment="Right" verticalAlignment="Middle"><font size="8" isBold="false" isItalic="false" pdfEncoding="Cp1252"/></textElement><textFieldExpression><![CDATA[$F{cantidad}]]></textFieldExpression></textField>
+	</band></detail>
+	<noData><band height="18">
+<staticText><reportElement x="0" y="0" width="535" height="18" positionType="FixRelativeToTop" forecolor="#56637A"/><box topPadding="2" leftPadding="6" bottomPadding="2" rightPadding="6"><bottomPen lineWidth="0.5" lineColor="#DDE2EA"/></box><textElement textAlignment="Left" verticalAlignment="Middle"><font size="8" isBold="false" isItalic="false" pdfEncoding="Cp1252"/></textElement><text><![CDATA[Sin materiales registrados.]]></text></staticText>
+	</band></noData>
+</jasperReport>

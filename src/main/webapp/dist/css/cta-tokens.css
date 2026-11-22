@@ -1,0 +1,276 @@
+/* CTA SUPPORT - Design tokens y base de accesibilidad.
+   Se carga una sola vez desde includes/header.jsp, por lo que aplica a todas las vistas.
+   Regla: ninguna vista nueva debe escribir colores, espacios ni radios "a mano";
+   se usan las variables de este archivo. */
+
+:root {
+    /* --- Color: marca --- */
+    --cta-navy: #1a2b4c;
+    --cta-steel: #3d6ba3;
+    --cta-slate: #5a6a7e;
+    --cta-teal-ok: #3d7d63;
+    --cta-gold: #8a6d3b;
+    --cta-burgundy: #7a3b46;
+    --cta-deep-teal: #1f5c53;
+    --cta-border: #d5dae1;
+    --cta-cyan: #06b6d4;
+    --cta-ink-dark: #0f172a;
+
+    /* --- Color: semánticos (usar estos en componentes) --- */
+    --cta-text: #1a2b4c;             /* 14.1:1 sobre blanco */
+    --cta-text-muted: #596579;       /* 5.9:1 sobre blanco (antes #8a93a3 = 3.1:1, no cumplía AA) */
+    --cta-text-on-dark: #f8fafc;     /* 17:1 sobre --cta-ink-dark */
+    --cta-surface: #ffffff;
+    --cta-surface-alt: #f4f6f9;
+    --cta-focus: #1d4ed8;            /* anillo de foco: 6.7:1 sobre blanco */
+    --cta-focus-on-dark: #67e8f9;
+    --cta-accent-orange: #c2410c;    /* 5.2:1 sobre blanco; el naranja de AdminLTE daba 2.6:1 */
+    --cta-accent-teal: #0f766e;      /* 5.5:1 sobre blanco; el verde de AdminLTE daba 2.1:1 */
+
+    /* --- Tipografía --- */
+    --cta-font: "Source Sans Pro", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    --cta-fs-sm: 0.875rem;
+    --cta-fs-base: 1rem;
+    --cta-fs-lg: 1.25rem;
+    --cta-lh: 1.5;
+
+    /* --- Espaciado (escala de 4 px) --- */
+    --cta-space-1: 0.25rem;
+    --cta-space-2: 0.5rem;
+    --cta-space-3: 0.75rem;
+    --cta-space-4: 1rem;
+    --cta-space-5: 1.5rem;
+    --cta-space-6: 2rem;
+
+    /* --- Forma y elevación --- */
+    --cta-radius-sm: 4px;
+    --cta-radius: 8px;
+    --cta-shadow: 0 1px 3px rgba(26, 43, 76, .18);
+
+    /* --- Movimiento --- */
+    --cta-motion: 150ms;
+
+    /* --- Skeleton --- */
+    --cta-skel-base: #e3e8ef;
+    --cta-skel-hi: #f1f4f8;
+
+    /* --- Tamaño mínimo de objetivo táctil (WCAG 2.2, 2.5.8) --- */
+    --cta-target-min: 28px;
+}
+
+body {
+    font-family: var(--cta-font);
+    line-height: var(--cta-lh);
+}
+
+.card { border-radius: var(--cta-radius); }
+
+/* Accesibilidad */
+
+/* Foco visible en todo elemento interactivo (AdminLTE/Bootstrap lo suprimen en varios). */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+summary:focus-visible,
+[tabindex]:focus-visible,
+.btn:focus-visible,
+.nav-link:focus-visible,
+.page-link:focus-visible {
+    outline: 3px solid var(--cta-focus);
+    outline-offset: 2px;
+    box-shadow: none;
+}
+.main-sidebar a:focus-visible,
+.main-sidebar button:focus-visible {
+    outline-color: var(--cta-focus-on-dark);
+}
+
+/* Enlace para saltar la navegación (primer elemento enfocable de cada página). */
+.cta-skip-link {
+    position: absolute;
+    left: var(--cta-space-2);
+    top: -4rem;
+    z-index: 2000;
+    padding: var(--cta-space-2) var(--cta-space-4);
+    background: var(--cta-navy);
+    color: #fff;
+    border-radius: var(--cta-radius-sm);
+    text-decoration: none;
+    font-weight: 600;
+}
+.cta-skip-link:focus { top: var(--cta-space-2); color: #fff; }
+
+/* Objetivos táctiles mínimos. */
+.btn-sm, .btn-xs, .page-link { min-height: var(--cta-target-min); min-width: var(--cta-target-min); }
+
+/* Contraste: textos secundarios y acentos que no llegaban a 4.5:1 sobre fondo claro. */
+.navbar-user .navbar-user-role { color: var(--cta-text-muted) !important; }
+.content-wrapper .text-orange { color: var(--cta-accent-orange) !important; }
+.content-wrapper .text-teal { color: var(--cta-accent-teal) !important; }
+/* Sobre el menú oscuro, los acentos originales sí contrastan; se conservan. */
+.main-sidebar .text-orange { color: #fd7e14 !important; }
+.main-sidebar .text-teal { color: #20c997 !important; }
+
+/* El color no debe ser la única señal: los enlaces dentro de texto corrido se subrayan. */
+.content-wrapper p a:not(.btn),
+.main-footer a { text-decoration: underline; }
+
+/* Respeta la preferencia de movimiento reducido del sistema. */
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+
+/* Modo de alto contraste de Windows. */
+@media (forced-colors: active) {
+    .cta-skeleton, .cta-skeleton-tr td > span { border: 1px solid CanvasText; }
+}
+
+/*
+   JERARQUÍA DE COLOR
+   Nivel 1 (marca / acción principal) : --cta-navy
+   Nivel 2 (apoyo / acción secundaria): --cta-steel y bordes --cta-border
+   Nivel 3 (neutros / texto auxiliar)  : --cta-slate, --cta-text-muted
+   Estados (siempre con texto o ícono, no solo color): ok, aviso, peligro, info
+   Todas las combinaciones texto/fondo de esta sección cumplen WCAG 2.1 AA (>= 4.5:1).
+ */
+:root {
+    --cta-nav-bg: #0f172a;
+    --cta-nav-active: #1e3a5f;       /* texto blanco: 11.5:1 */
+    --cta-nav-text-1: #f8fafc;       /* títulos de grupo: 17.1:1 sobre --cta-nav-bg */
+    --cta-nav-text-2: #cbd5e1;       /* subítems: 12.0:1 sobre --cta-nav-bg */
+    --cta-page-bg: #f4f6f9;
+    --cta-tint-ok: #e6f2ec;
+    --cta-tint-warn: #f6efe2;
+    --cta-tint-danger: #f5e8ea;
+    --cta-tint-info: #e7eef7;
+}
+
+/* Fondo de página y títulos: lo más importante pesa más. */
+.content-wrapper { background: var(--cta-page-bg); }
+.content-header h1 { font-size: 1.6rem; font-weight: 700; color: var(--cta-navy); }
+.card-title { font-weight: 600; color: var(--cta-navy); }
+.card:not([class*="card-outline"]) > .card-header:not([class*="bg-"]) {
+    background: var(--cta-surface);
+    border-bottom: 1px solid var(--cta-border);
+}
+.card { box-shadow: var(--cta-shadow); border: 1px solid var(--cta-border); }
+
+/* Botones: principal (navy sólido) > secundario (contorno) > terciario (enlace). */
+.btn-default {
+    background: var(--cta-surface);
+    border: 1px solid var(--cta-border);
+    color: var(--cta-navy);
+}
+.btn-default:hover, .btn-default:focus { background: var(--cta-surface-alt); color: var(--cta-navy); }
+.btn-link { color: var(--cta-steel); text-decoration: underline; }
+.btn:disabled, .btn.disabled { opacity: .65; }
+
+/* Etiquetas de estado: fondo tenue + texto oscuro + borde, legibles sin depender del matiz. */
+.badge-success, .badge-warning, .badge-danger, .badge-info { font-weight: 600; }
+
+/* Mensajes: fondo tenue por tipo, con texto de marca. */
+.alert-success { background: var(--cta-tint-ok); border-color: var(--cta-teal-ok); color: #1b4332; }
+.alert-warning { background: var(--cta-tint-warn); border-color: var(--cta-gold); color: #5c4620; }
+.alert-danger  { background: var(--cta-tint-danger); border-color: var(--cta-burgundy); color: #5c2c35; }
+.alert-info    { background: var(--cta-tint-info); border-color: var(--cta-steel); color: var(--cta-navy); }
+
+/* Tablas: encabezado navy, filas alternas muy suaves, fila bajo cursor visible. */
+.table thead th { font-weight: 600; }
+.table-striped tbody tr:nth-of-type(odd) { background-color: var(--cta-surface-alt); }
+.table-hover tbody tr:hover { background-color: var(--cta-tint-info); }
+
+/* Formularios: borde con contraste suficiente (1.4.11) y placeholder legible. */
+.form-control { border-color: #7b879a; }
+.form-control::placeholder { color: var(--cta-text-muted); opacity: 1; }
+
+/* Menú lateral */
+.main-sidebar .brand-link {
+    background: var(--cta-nav-bg);
+    border-bottom: 1px solid rgba(248, 250, 252, .14);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: auto;
+    padding: 1rem .75rem;
+}
+/* Logo en versión para fondo oscuro (SUPPORT y arco en blanco): img/logo_sidebar.png */
+.cta-brand-logo { display: block; line-height: 0; }
+.cta-brand-logo img { width: 150px; max-width: 100%; height: auto; display: block; }
+/* Menú contraído: solo se ve la "C" del logo. */
+.sidebar-mini.sidebar-collapse .main-sidebar:not(:hover):not(.sidebar-focused) .brand-link { padding: .75rem 0; }
+.sidebar-mini.sidebar-collapse .main-sidebar:not(:hover):not(.sidebar-focused) .cta-brand-logo { width: 2.2rem; overflow: hidden; margin: 0 auto; }
+.sidebar-mini.sidebar-collapse .main-sidebar:not(:hover):not(.sidebar-focused) .cta-brand-logo img { width: 6.4rem; max-width: none; }
+
+/* Nivel 1: grupos del menú. Nivel 2: opciones. */
+.main-sidebar .nav-sidebar > .nav-item > .nav-link > p {
+    font-weight: 700;
+    letter-spacing: .04em;
+    color: var(--cta-nav-text-1) !important;
+}
+.main-sidebar .nav-treeview > .nav-item > .nav-link > p {
+    font-weight: 400;
+    color: var(--cta-nav-text-2) !important;
+}
+.main-sidebar .nav-treeview > .nav-item > .nav-link:hover > p { color: var(--cta-nav-text-1) !important; }
+
+/* Elemento activo: antes azul #007bff con 3.98:1; ahora 11.5:1 y marca lateral. */
+.main-sidebar .nav-pills .nav-link.active,
+.main-sidebar .nav-pills .nav-link.active:hover,
+.main-sidebar .nav-pills .show > .nav-link {
+    background-color: var(--cta-nav-active) !important;
+    box-shadow: inset 3px 0 0 var(--cta-cyan);
+}
+.main-sidebar .nav-pills .nav-link.active > p { color: #fff !important; font-weight: 700; }
+
+/* Barra superior: usuario y rol con jerarquía clara. */
+.navbar-user .navbar-user-name { color: var(--cta-navy); }
+
+
+/* ------------------------------------------------------------------
+   Pantallas de gestión: un solo color de acción (navy) y comportamiento en celular
+   ------------------------------------------------------------------ */
+
+/* Escritorio y celular: la cabecera de cada pantalla de gestión alinea título y botones. */
+.content-header .btn.float-right + .btn.float-right { margin-right: var(--cta-space-2); }
+
+/* Estados vacíos de las tablas. */
+.cta-empty-row td { text-align: center; color: var(--cta-text-muted); padding: var(--cta-space-5) var(--cta-space-3); }
+
+/* Aviso de "guardado" o "eliminado" (SweetAlert2 en modo aviso breve). */
+.swal2-popup.swal2-toast { box-shadow: var(--cta-shadow); }
+
+/* Panel de inicio */
+.cta-welcome { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--cta-space-3); margin-bottom: var(--cta-space-5); }
+.cta-welcome h2 { margin: 0; font-size: 1.5rem; font-weight: 700; color: var(--cta-navy); }
+.cta-welcome p { margin: 0; color: var(--cta-text-muted); }
+.cta-catalogos { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: var(--cta-space-2); }
+.cta-catalogos a { display: flex; align-items: center; justify-content: space-between; padding: var(--cta-space-2) var(--cta-space-3); border: 1px solid var(--cta-border); border-radius: var(--cta-radius-sm); color: var(--cta-navy); background: var(--cta-surface); text-decoration: none; }
+.cta-catalogos a:hover { background: var(--cta-tint-info); }
+.cta-catalogos .cta-cantidad { font-weight: 700; }
+
+/* Celular */
+@media (max-width: 767.98px) {
+    /* Las tablas nunca deben ensanchar la página: se desplazan dentro de su tarjeta. */
+    .content-wrapper .card-body { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    .content-wrapper .card-body > table,
+    .content-wrapper .card-body .table { min-width: 560px; }
+    .content-wrapper .table-responsive > table { min-width: 560px; }
+    .modal-dialog { margin: var(--cta-space-2); }
+}
+
+@media (max-width: 575.98px) {
+    /* Los botones del encabezado ocupan el ancho completo en lugar de apilarse a medias. */
+    .content-header .btn.float-right,
+    .content-header .btn-group,
+    .content-header .btn-toolbar { float: none !important; display: block; width: 100%; margin: 0 0 var(--cta-space-2) 0 !important; }
+    .content-header .col-sm-6, .content-header .col-sm-8, .content-header .col-sm-4 { margin-bottom: var(--cta-space-2); }
+    .content-header h1 { font-size: 1.35rem; }
+    .cta-welcome .btn { width: 100%; }
+}

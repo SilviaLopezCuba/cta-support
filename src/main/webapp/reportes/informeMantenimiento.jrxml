@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Generado con el estilo unificado de CTA Support. Colores: tinta #14284B, rojo #B01E35, plata #AAB4C0, azul #1F5BA8. -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="informeMantenimiento" language="groovy" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="786" leftMargin="28" rightMargin="28" topMargin="24" bottomMargin="20" whenNoDataType="AllSectionsNoDetail">
+	<style name="base" isDefault="true" fontName="SansSerif" fontSize="8.5" forecolor="#1E2B45" pdfEncoding="Cp1252"/>
+	<parameter name="DESDE" class="java.lang.String"/>
+	<parameter name="HASTA" class="java.lang.String"/>
+	<parameter name="USUARIO_GENERA" class="java.lang.String"/>
+	<parameter name="LOGO_PATH" class="java.lang.String"/>
+	<parameter name="RESUMEN" class="java.lang.String"/>
+	<parameter name="SUBTITULO" class="java.lang.String"/>
+	<parameter name="FILTROS" class="java.lang.String">
+		<defaultValueExpression><![CDATA["1=1"]]></defaultValueExpression>
+	</parameter>
+	<queryString language="SQL">
+		<![CDATA[SELECT (m.numero_mantenimiento)::text AS numero,
+       (to_char(m.fecha_programada, 'DD/MM/YYYY'))::text AS fecha_programada,
+       (m.estado)::text AS estado,
+       (s.nombre_sala)::text AS nombre_sala,
+       (COALESCE(p.apellido || ', ' || p.nombre, 'Sin asignar'))::text AS tecnico,
+       (to_char(m.fecha_fin, 'DD/MM/YYYY'))::text AS fecha_fin,
+       (COALESCE(m.observacion_inicial, '—'))::text AS obs_inicial,
+       (COALESCE(NULLIF(concat_ws(', ', CASE WHEN rm.c_ok > 0 THEN 'OK: ' || rm.c_ok END, CASE WHEN rm.c_rep > 0 THEN 'Con repuesto: ' || rm.c_rep END, CASE WHEN rm.c_nr > 0 THEN 'No reparables: ' || rm.c_nr END, CASE WHEN rm.c_der > 0 THEN 'A ticket: ' || rm.c_der END), ''), '—'))::text AS resultados
+FROM public.mantenimientos_preventivos m LEFT JOIN public.salas s ON m.id_sala = s.id_sala LEFT JOIN public.tecnicos t ON m.id_tecnico_ejecuta = t.id_tecnico LEFT JOIN public.usuarios u ON t.id_usuario = u.id_usuario LEFT JOIN public.personas p ON u.id_persona = p.id_persona LEFT JOIN LATERAL (SELECT count(*) FILTER (WHERE dd.resultado IN ('OK', 'Reparado')) AS c_ok, count(*) FILTER (WHERE dd.resultado = 'Requirió repuesto') AS c_rep, count(*) FILTER (WHERE dd.resultado = 'No reparable') AS c_nr, count(*) FILTER (WHERE dd.resultado = 'Derivado a ticket') AS c_der FROM public.mantenimientos_preventivos_detalle dd WHERE dd.id_mantenimiento = m.id_mantenimiento) rm ON true WHERE m.fecha_programada BETWEEN CAST($P{DESDE} AS date) AND CAST($P{HASTA} AS date) AND ($P!{FILTROS})
+ORDER BY m.fecha_programada]]>
+	</queryString>
+	<field name="numero" class="java.lang.String"/>
+	<field name="fecha_programada" class="java.lang.String"/>
+	<field name="estado" class="java.lang.String"/>
+	<field name="nombre_sala" class="java.lang.String"/>
+	<field name="tecnico" class="java.lang.String"/>
+	<field name="fecha_fin" class="java.lang.String"/>
+	<field name="obs_inicial" class="java.lang.String"/>
+	<field name="resultados" class="java.lang.String"/>
+	<variable name="totalRegistros" class="java.lang.Integer" calculation="Count">
+		<variableExpression><![CDATA[1]]></variableExpression>
+		<initialValueExpression><![CDATA[0]]></initialValueExpression>
+	</variable>
+	<pageHeader>
+		<band height="68" splitType="Stretch">
+			<image scaleImage="RetainShape" hAlign="Left" vAlign="Middle" onErrorType="Blank"><reportElement x="0" y="2" width="92" height="46"/><imageExpression><![CDATA[$P{LOGO_PATH}]]></imageExpression></image>
+			<staticText><reportElement x="104" y="4" width="512" height="24" forecolor="#14284B"/><textElement verticalAlignment="Middle"><font fontName="SansSerif" size="11.5" isBold="true" pdfEncoding="Cp1252"/></textElement><text><![CDATA[Informe de Mantenimiento Preventivo]]></text></staticText>
+			<textField textAdjust="ScaleFont" isBlankWhenNull="true"><reportElement x="104" y="28" width="512" height="16" forecolor="#56637A"/><textElement verticalAlignment="Middle"><font fontName="SansSerif" size="9" isBold="false" pdfEncoding="Cp1252"/></textElement><textFieldExpression><![CDATA[$P{SUBTITULO} != null ? $P{SUBTITULO} : ("Período: " + ($P{DESDE} == null ? "inicio" : java.time.LocalDate.parse($P{DESDE}).format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy"))) + " al " + ($P{HASTA} == null ? "hoy" : java.time.LocalDate.parse($P{HASTA}).format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy"))))]]></textFieldExpression></textField>
+			<textField><reportElement x="616" y="10" width="170" height="14" forecolor="#56637A"/><textElement textAlignment="Right" verticalAlignment="Middle"><font fontName="SansSerif" size="8" isBold="false" pdfEncoding="Cp1252"/></textElement><textFieldExpression><![CDATA["Generado el " + new java.text.SimpleDateFormat("dd/MM/yyyy HH:mm").format(new java.util.Date())]]></textFieldExpression></textField>
+			<textField textAdjust="ScaleFont" isBlankWhenNull="true"><reportElement x="616" y="24" width="170" height="14" forecolor="#56637A"/><textElement textAlignment="Right" verticalAlignment="Middle"><font fontName="SansSerif" size="8" isBold="false" pdfEncoding="Cp1252"/></textElement><textFieldExpression><![CDATA[$P{USUARIO_GENERA} == null ? "" : "Por: " + $P{USUARIO_GENERA}]]></textFieldExpression></textField>
+			<rectangle><reportElement x="0" y="54" width="262" height="3" forecolor="#B01E35" backcolor="#B01E35"/><graphicElement><pen lineWidth="0.0"/></graphicElement></rectangle>
+			<rectangle><reportElement x="262" y="54" width="262" height="3" forecolor="#AAB4C0" backcolor="#AAB4C0"/><graphicElement><pen lineWidth="0.0"/></graphicElement></rectangle>
+			<rectangle><reportElement x="524" y="54" width="262" height="3" forecolor="#1F5BA8" backcolor="#1F5BA8"/><graphicElement><pen lineWidth="0.0"/></graphicElement></rectangle>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="20" splitType="Stretch">
+			<rectangle><reportElement x="0" y="0" width="786" height="20" forecolor="#14284B" backcolor="#14284B"/><graphicElement><pen lineWidth="0.0"/></graphicElement></rectangle>
+			<staticText><reportElement x="0" y="0" width="76" height="20" forecolor="#FFFFFF"/><box leftPadding="5" rightPadding="5"/><textElement textAlignment="Left" verticalAlignment="Middle"><font fontName="SansSerif" size="8" isBold="true" pdfEncoding="Cp1252"/></textElement><text><![CDATA[N° Mantenimiento]]></text></staticText>
+			<staticText><reportElement x="76" y="0" width="66" height="20" forecolor="#FFFFFF"/><box leftPadding="5" rightPadding="5"/><textElement textAlignment="Left" verticalAlignment="Middle"><font fontName="SansSerif" size="8" isBold="true" pdfEncoding="Cp1252"/></textElement><text><![CDATA[Fecha programada]]></text></staticText>
+			<staticText><reportElement x="142" y="0" width="64" height="20" forecolor="#FFFFFF"/><box leftPadding="5" rightPadding="5"/><textElement textAlignment="Left" verticalAlignment="Middle"><font fontName="SansSerif" size="8" isBold="true" pdfEncoding="Cp1252"/></textElement><text><![CDATA[Estado]]></text></staticText>
+			<staticText><reportElement x="206" y="0" width="110" height="20" forecolor="#FFFFFF"/><box leftPadding="5" rightPadding="5"/><textElement textAlignment="Left" verticalAlignment="Middle"><font fontName="SansSerif" size="8" isBold="true" pdfEncoding="Cp1252"/></textElement><text><![CDATA[Sala]]></text></staticText>
+			<staticText><reportElement x="316" y="0" width="110" height="20" forecolor="#FFFFFF"/><box leftPadding="5" rightPadding="5"/><textElement textAlignment="Left" verticalAlignment="Middle"><font fontName="SansSerif" size="8" isBold="true" pdfEncoding="Cp1252"/></textElement><text><![CDATA[Técnico]]></text></staticText>
+			<staticText><reportElement x="426" y="0" width="70" height="20" forecolor="#FFFFFF"/><box leftPadding="5" rightPadding="5"/><textElement textAlignment="Left" verticalAlignment="Middle"><font fontName="SansSerif" size="8" isBold="true" pdfEncoding="Cp1252"/></textElement><text><![CDATA[Fecha fin]]></text></staticText>
+			<staticText><reportElement x="496" y="0" width="170" height="20" forecolor="#FFFFFF"/><box leftPadding="5" rightPadding="5"/><textElement textAlignment="Left" verticalAlignment="Middle"><font fontName="SansSerif" size="8" isBold="true" pdfEncoding="Cp1252"/></textElement><text><![CDATA[Observación inicial]]></text></staticText>
+			<staticText><reportElement x="666" y="0" width="120" height="20" forecolor="#FFFFFF"/><box leftPadding="5" rightPadding="5"/><textElement textAlignment="Left" verticalAlignment="Middle"><font fontName="SansSerif" size="8" isBold="true" pdfEncoding="Cp1252"/></textElement><text><![CDATA[Resultado de los equipos]]></text></staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="18" splitType="Prevent">
+			<rectangle><reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="786" height="18" forecolor="#F3F5F8" backcolor="#F3F5F8"><printWhenExpression><![CDATA[$V{REPORT_COUNT} % 2 == 0]]></printWhenExpression></reportElement><graphicElement><pen lineWidth="0.0"/></graphicElement></rectangle>
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true"><reportElement x="0" y="0" width="76" height="18" stretchType="RelativeToTallestObject"/><box topPadding="3" leftPadding="5" bottomPadding="3" rightPadding="5"/><textElement textAlignment="Left" verticalAlignment="Middle"><font fontName="SansSerif" size="8" isBold="false" pdfEncoding="Cp1252"/></textElement><textFieldExpression><![CDATA[$F{numero} == null || $F{numero}.toString().trim().isEmpty() ? "—" : $F{numero}.toString()]]></textFieldExpression></textField>
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true"><reportElement x="76" y="0" width="66" height="18" stretchType="RelativeToTallestObject"/><box topPadding="3" leftPadding="5" bottomPadding="3" rightPadding="5"/><textElement textAlignment="Left" verticalAlignment="Middle"><font fontName="SansSerif" size="8" isBold="false" pdfEncoding="Cp1252"/></textElement><textFieldExpression><![CDATA[$F{fecha_programada} == null || $F{fecha_programada}.toString().trim().isEmpty() ? "—" : $F{fecha_programada}.toString()]]></textFieldExpression></textField>
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true"><reportElement x="142" y="0" width="64" height="18" stretchType="RelativeToTallestObject"/><box topPadding="3" leftPadding="5" bottomPadding="3" rightPadding="5"/><textElement textAlignment="Left" verticalAlignment="Middle"><font fontName="SansSerif" size="8" isBold="false" pdfEncoding="Cp1252"/></textElement><textFieldExpression><![CDATA[$F{estado} == null || $F{estado}.toString().trim().isEmpty() ? "—" : $F{estado}.toString()]]></textFieldExpression></textField>
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true"><reportElement x="206" y="0" width="110" height="18" stretchType="RelativeToTallestObject"/><box topPadding="3" leftPadding="5" bottomPadding="3" rightPadding="5"/><textElement textAlignment="Left" verticalAlignment="Middle"><font fontName="SansSerif" size="8" isBold="false" pdfEncoding="Cp1252"/></textElement><textFieldExpression><![CDATA[$F{nombre_sala} == null || $F{nombre_sala}.toString().trim().isEmpty() ? "—" : $F{nombre_sala}.toString()]]></textFieldExpression></textField>
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true"><reportElement x="316" y="0" width="110" height="18" stretchType="RelativeToTallestObject"/><box topPadding="3" leftPadding="5" bottomPadding="3" rightPadding="5"/><textElement textAlignment="Left" verticalAlignment="Middle"><font fontName="SansSerif" size="8" isBold="false" pdfEncoding="Cp1252"/></textElement><textFieldExpression><![CDATA[$F{tecnico} == null || $F{tecnico}.toString().trim().isEmpty() ? "—" : $F{tecnico}.toString()]]></textFieldExpression></textField>
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true"><reportElement x="426" y="0" width="70" height="18" stretchType="RelativeToTallestObject"/><box topPadding="3" leftPadding="5" bottomPadding="3" rightPadding="5"/><textElement textAlignment="Left" verticalAlignment="Middle"><font fontName="SansSerif" size="8" isBold="false" pdfEncoding="Cp1252"/></textElement><textFieldExpression><![CDATA[$F{fecha_fin} == null || $F{fecha_fin}.toString().trim().isEmpty() ? "—" : $F{fecha_fin}.toString()]]></textFieldExpression></textField>
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true"><reportElement x="496" y="0" width="170" height="18" stretchType="RelativeToTallestObject"/><box topPadding="3" leftPadding="5" bottomPadding="3" rightPadding="5"/><textElement textAlignment="Left" verticalAlignment="Middle"><font fontName="SansSerif" size="8" isBold="false" pdfEncoding="Cp1252"/></textElement><textFieldExpression><![CDATA[$F{obs_inicial} == null || $F{obs_inicial}.toString().trim().isEmpty() ? "—" : $F{obs_inicial}.toString()]]></textFieldExpression></textField>
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true"><reportElement x="666" y="0" width="120" height="18" stretchType="RelativeToTallestObject"/><box topPadding="3" leftPadding="5" bottomPadding="3" rightPadding="5"/><textElement textAlignment="Left" verticalAlignment="Middle"><font fontName="SansSerif" size="8" isBold="false" pdfEncoding="Cp1252"/></textElement><textFieldExpression><![CDATA[$F{resultados} == null || $F{resultados}.toString().trim().isEmpty() ? "—" : $F{resultados}.toString()]]></textFieldExpression></textField>
+			<line><reportElement positionType="FixRelativeToBottom" x="0" y="17" width="786" height="1" forecolor="#DDE2EA"/><graphicElement><pen lineWidth="0.5" lineColor="#DDE2EA"/></graphicElement></line>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="22" splitType="Stretch">
+			<line><reportElement x="0" y="4" width="786" height="1" forecolor="#DDE2EA"/><graphicElement><pen lineWidth="0.5" lineColor="#DDE2EA"/></graphicElement></line>
+			<staticText><reportElement x="0" y="8" width="666" height="12" forecolor="#56637A"/><textElement verticalAlignment="Middle"><font fontName="SansSerif" size="7.5" isBold="false" pdfEncoding="Cp1252"/></textElement><text><![CDATA[CTA Support — Sistema de Soporte Técnico]]></text></staticText>
+			<textField><reportElement x="666" y="8" width="95" height="12" forecolor="#56637A"/><textElement textAlignment="Right" verticalAlignment="Middle"><font fontName="SansSerif" size="7.5" isBold="false" pdfEncoding="Cp1252"/></textElement><textFieldExpression><![CDATA["Página " + $V{PAGE_NUMBER} + " de"]]></textFieldExpression></textField>
+			<textField evaluationTime="Report"><reportElement x="761" y="8" width="25" height="12" forecolor="#56637A"/><textElement verticalAlignment="Middle"><font fontName="SansSerif" size="7.5" isBold="false" pdfEncoding="Cp1252"/></textElement><textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression></textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band height="48" splitType="Prevent">
+			<line><reportElement x="0" y="0" width="786" height="1" forecolor="#14284B"/><graphicElement><pen lineWidth="1.0" lineColor="#14284B"/></graphicElement></line>
+			<textField><reportElement x="6" y="6" width="774" height="16" forecolor="#14284B"/><textElement verticalAlignment="Middle"><font fontName="SansSerif" size="9.5" isBold="true" pdfEncoding="Cp1252"/></textElement><textFieldExpression><![CDATA[$V{totalRegistros} == 0 ? "No hay registros para mostrar." : "Total: " + $V{totalRegistros} + ($V{totalRegistros} == 1 ? " mantenimiento" : " mantenimientos")]]></textFieldExpression></textField>
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true"><reportElement x="6" y="22" width="774" height="14" forecolor="#56637A"/><textElement verticalAlignment="Middle"><font fontName="SansSerif" size="8.5" isBold="false" pdfEncoding="Cp1252"/></textElement><textFieldExpression><![CDATA[$V{totalRegistros} == 0 ? null : $P{RESUMEN}]]></textFieldExpression></textField>
+		</band>
+	</summary>
+</jasperReport>

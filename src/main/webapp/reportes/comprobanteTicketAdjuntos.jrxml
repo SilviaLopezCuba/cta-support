@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Archivos adjuntos del ticket: fotos en miniatura (2 por fila) y PDF como recuadro.
+     Las fotos se reducen a 700 px solo para este PDF (ImagenUtil.miniatura); el original no cambia.
+     Si el ticket no tiene adjuntos, el subreporte no imprime nada (ni el título).
+     El título va dentro de la primera fila (banda que no se parte), así nunca queda solo al pie de una hoja. -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports"
+              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd"
+              name="comprobanteTicketAdjuntos" language="groovy" pageWidth="535" pageHeight="842" columnWidth="535"
+              leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" whenNoDataType="NoPages">
+	<style name="base" isDefault="true" fontName="SansSerif" fontSize="9" forecolor="#1E2B45" pdfEncoding="Cp1252"/>
+	<parameter name="ID_TICKET" class="java.lang.Integer"/>
+	<queryString><![CDATA[WITH a AS (
+    SELECT row_number() OVER (ORDER BY id_adjunto) AS n, nombre_archivo, fecha_subida,
+           lower(nombre_archivo) LIKE '%.pdf' AS es_pdf,
+           CASE WHEN lower(nombre_archivo) LIKE '%.pdf' THEN NULL ELSE contenido END AS imagen
+    FROM public.ticket_adjuntos WHERE id_ticket = $P{ID_TICKET}
+)
+SELECT x.nombre_archivo AS nombre1, x.fecha_subida AS fecha1, x.es_pdf AS pdf1, x.imagen AS imagen1,
+       y.nombre_archivo AS nombre2, y.fecha_subida AS fecha2, y.es_pdf AS pdf2, y.imagen AS imagen2
+FROM a x LEFT JOIN a y ON y.n = x.n + 1
+WHERE x.n % 2 = 1
+ORDER BY x.n]]></queryString>
+	<field name="nombre1" class="java.lang.String"/>
+	<field name="fecha1" class="java.sql.Timestamp"/>
+	<field name="pdf1" class="java.lang.Boolean"/>
+	<field name="imagen1" class="java.io.InputStream"/>
+	<field name="nombre2" class="java.lang.String"/>
+	<field name="fecha2" class="java.sql.Timestamp"/>
+	<field name="pdf2" class="java.lang.Boolean"/>
+	<field name="imagen2" class="java.io.InputStream"/>
+	<detail>
+		<band height="244" splitType="Prevent">
+			<!-- Título de la sección: solo en la primera fila; en las demás se elimina su espacio -->
+			<staticText><reportElement x="0" y="4" width="535" height="16" forecolor="#14284B" isRemoveLineWhenBlank="true"><printWhenExpression><![CDATA[$V{REPORT_COUNT} == 1]]></printWhenExpression></reportElement><box leftPadding="0" rightPadding="3" bottomPadding="1"><bottomPen lineWidth="1.0" lineColor="#14284B"/></box><textElement verticalAlignment="Middle"><font size="10" isBold="true" pdfEncoding="Cp1252"/></textElement><text><![CDATA[Archivos adjuntos]]></text></staticText>
+			<!-- Primer archivo de la fila -->
+			<rectangle><reportElement x="0" y="32" width="262" height="176" forecolor="#DDE2EA" backcolor="#F3F5F8"/><graphicElement><pen lineWidth="0.5" lineColor="#DDE2EA"/></graphicElement></rectangle>
+			<image scaleImage="RetainShape" hAlign="Center" vAlign="Middle" onErrorType="Blank" isLazy="false">
+				<reportElement x="4" y="36" width="254" height="168"><printWhenExpression><![CDATA[$F{imagen1} != null]]></printWhenExpression></reportElement>
+				<imageExpression><![CDATA[com.mycompany.pro.util.ImagenUtil.miniatura($F{imagen1}, 700)]]></imageExpression>
+			</image>
+			<staticText><reportElement x="4" y="98" width="254" height="40" forecolor="#B01E35"><printWhenExpression><![CDATA[Boolean.TRUE.equals($F{pdf1})]]></printWhenExpression></reportElement><textElement textAlignment="Center" verticalAlignment="Middle"><font size="12" isBold="true" pdfEncoding="Cp1252"/></textElement><text><![CDATA[Documento PDF]]></text></staticText>
+			<textField textAdjust="ScaleFont" isBlankWhenNull="true"><reportElement x="0" y="211" width="262" height="14"/><textElement verticalAlignment="Middle"><font size="8" isBold="true" pdfEncoding="Cp1252"/></textElement><textFieldExpression><![CDATA[$F{nombre1}]]></textFieldExpression></textField>
+			<textField isBlankWhenNull="true"><reportElement x="0" y="225" width="262" height="12" forecolor="#56637A"/><textElement verticalAlignment="Middle"><font size="7.5" pdfEncoding="Cp1252"/></textElement><textFieldExpression><![CDATA[$F{fecha1} == null ? null : "Subido el " + new java.text.SimpleDateFormat("dd/MM/yyyy HH:mm").format($F{fecha1})]]></textFieldExpression></textField>
+			<!-- Segundo archivo de la fila (si existe) -->
+			<rectangle><reportElement x="273" y="32" width="262" height="176" forecolor="#DDE2EA" backcolor="#F3F5F8"><printWhenExpression><![CDATA[$F{nombre2} != null]]></printWhenExpression></reportElement><graphicElement><pen lineWidth="0.5" lineColor="#DDE2EA"/></graphicElement></rectangle>
+			<image scaleImage="RetainShape" hAlign="Center" vAlign="Middle" onErrorType="Blank" isLazy="false">
+				<reportElement x="277" y="36" width="254" height="168"><printWhenExpression><![CDATA[$F{imagen2} != null]]></printWhenExpression></reportElement>
+				<imageExpression><![CDATA[com.mycompany.pro.util.ImagenUtil.miniatura($F{imagen2}, 700)]]></imageExpression>
+			</image>
+			<staticText><reportElement x="277" y="98" width="254" height="40" forecolor="#B01E35"><printWhenExpression><![CDATA[Boolean.TRUE.equals($F{pdf2})]]></printWhenExpression></reportElement><textElement textAlignment="Center" verticalAlignment="Middle"><font size="12" isBold="true" pdfEncoding="Cp1252"/></textElement><text><![CDATA[Documento PDF]]></text></staticText>
+			<textField textAdjust="ScaleFont" isBlankWhenNull="true"><reportElement x="273" y="211" width="262" height="14"/><textElement verticalAlignment="Middle"><font size="8" isBold="true" pdfEncoding="Cp1252"/></textElement><textFieldExpression><![CDATA[$F{nombre2}]]></textFieldExpression></textField>
+			<textField isBlankWhenNull="true"><reportElement x="273" y="225" width="262" height="12" forecolor="#56637A"/><textElement verticalAlignment="Middle"><font size="7.5" pdfEncoding="Cp1252"/></textElement><textFieldExpression><![CDATA[$F{fecha2} == null ? null : "Subido el " + new java.text.SimpleDateFormat("dd/MM/yyyy HH:mm").format($F{fecha2})]]></textFieldExpression></textField>
+		</band>
+	</detail>
+</jasperReport>

@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Generado con el estilo unificado de CTA Support. Colores: tinta #14284B, rojo #B01E35, plata #AAB4C0, azul #1F5BA8. -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="reporte_personas" language="groovy" pageWidth="595" pageHeight="842" columnWidth="539" leftMargin="28" rightMargin="28" topMargin="24" bottomMargin="20" whenNoDataType="AllSectionsNoDetail">
+	<style name="base" isDefault="true" fontName="SansSerif" fontSize="8.5" forecolor="#1E2B45" pdfEncoding="Cp1252"/>
+	<parameter name="LOGO_PATH" class="java.lang.String"/>
+	<parameter name="P_GENERADOR_NOMBRE" class="java.lang.String">
+		<defaultValueExpression><![CDATA["-"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_GENERADOR_ROL" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<queryString language="SQL">
+		<![CDATA[SELECT * FROM public.personas ORDER BY apellido, nombre]]>
+	</queryString>
+	<field name="id_persona" class="java.lang.Integer"/>
+	<field name="nombre" class="java.lang.String"/>
+	<field name="apellido" class="java.lang.String"/>
+	<field name="documento" class="java.lang.String"/>
+	<field name="correo" class="java.lang.String"/>
+	<field name="telefono" class="java.lang.String"/>
+	<variable name="totalRegistros" class="java.lang.Integer" calculation="Count">
+		<variableExpression><![CDATA[1]]></variableExpression>
+		<initialValueExpression><![CDATA[0]]></initialValueExpression>
+	</variable>
+	<pageHeader>
+		<band height="68" splitType="Stretch">
+			<image scaleImage="RetainShape" hAlign="Left" vAlign="Middle" onErrorType="Blank"><reportElement x="0" y="2" width="92" height="46"/><imageExpression><![CDATA[$P{LOGO_PATH}]]></imageExpression></image>
+			<staticText><reportElement x="104" y="4" width="265" height="24" forecolor="#14284B"/><textElement verticalAlignment="Middle"><font fontName="SansSerif" size="16" isBold="true" pdfEncoding="Cp1252"/></textElement><text><![CDATA[Reporte de Personas]]></text></staticText>
+			<textField textAdjust="ScaleFont" isBlankWhenNull="true"><reportElement x="104" y="28" width="265" height="16" forecolor="#56637A"/><textElement verticalAlignment="Middle"><font fontName="SansSerif" size="9" isBold="false" pdfEncoding="Cp1252"/></textElement><textFieldExpression><![CDATA["Listado general de personas registradas"]]></textFieldExpression></textField>
+			<textField><reportElement x="369" y="10" width="170" height="14" forecolor="#56637A"/><textElement textAlignment="Right" verticalAlignment="Middle"><font fontName="SansSerif" size="8" isBold="false" pdfEncoding="Cp1252"/></textElement><textFieldExpression><![CDATA["Generado el " + new java.text.SimpleDateFormat("dd/MM/yyyy HH:mm").format(new java.util.Date())]]></textFieldExpression></textField>
+			<textField textAdjust="ScaleFont" isBlankWhenNull="true"><reportElement x="369" y="24" width="170" height="14" forecolor="#56637A"/><textElement textAlignment="Right" verticalAlignment="Middle"><font fontName="SansSerif" size="8" isBold="false" pdfEncoding="Cp1252"/></textElement><textFieldExpression><![CDATA[$P{P_GENERADOR_NOMBRE} == null || $P{P_GENERADOR_NOMBRE}.equals("-") ? "" : "Por: " + $P{P_GENERADOR_NOMBRE} + ($P{P_GENERADOR_ROL} != null && $P{P_GENERADOR_ROL}.length() > 0 ? " (" + $P{P_GENERADOR_ROL} + ")" : "")]]></textFieldExpression></textField>
+			<rectangle><reportElement x="0" y="54" width="179" height="3" forecolor="#B01E35" backcolor="#B01E35"/><graphicElement><pen lineWidth="0.0"/></graphicElement></rectangle>
+			<rectangle><reportElement x="179" y="54" width="179" height="3" forecolor="#AAB4C0" backcolor="#AAB4C0"/><graphicElement><pen lineWidth="0.0"/></graphicElement></rectangle>
+			<rectangle><reportElement x="358" y="54" width="181" height="3" forecolor="#1F5BA8" backcolor="#1F5BA8"/><graphicElement><pen lineWidth="0.0"/></graphicElement></rectangle>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="20" splitType="Stretch">
+			<rectangle><reportElement x="0" y="0" width="539" height="20" forecolor="#14284B" backcolor="#14284B"/><graphicElement><pen lineWidth="0.0"/></graphicElement></rectangle>
+			<staticText><reportElement x="0" y="0" width="44" height="20" forecolor="#FFFFFF"/><box leftPadding="6" rightPadding="6"/><textElement textAlignment="Left" verticalAlignment="Middle"><font fontName="SansSerif" size="8.5" isBold="true" pdfEncoding="Cp1252"/></textElement><text><![CDATA[Código]]></text></staticText>
+			<staticText><reportElement x="44" y="0" width="92" height="20" forecolor="#FFFFFF"/><box leftPadding="6" rightPadding="6"/><textElement textAlignment="Left" verticalAlignment="Middle"><font fontName="SansSerif" size="8.5" isBold="true" pdfEncoding="Cp1252"/></textElement><text><![CDATA[Nombre]]></text></staticText>
+			<staticText><reportElement x="136" y="0" width="104" height="20" forecolor="#FFFFFF"/><box leftPadding="6" rightPadding="6"/><textElement textAlignment="Left" verticalAlignment="Middle"><font fontName="SansSerif" size="8.5" isBold="true" pdfEncoding="Cp1252"/></textElement><text><![CDATA[Apellido]]></text></staticText>
+			<staticText><reportElement x="240" y="0" width="72" height="20" forecolor="#FFFFFF"/><box leftPadding="6" rightPadding="6"/><textElement textAlignment="Left" verticalAlignment="Middle"><font fontName="SansSerif" size="8.5" isBold="true" pdfEncoding="Cp1252"/></textElement><text><![CDATA[Documento]]></text></staticText>
+			<staticText><reportElement x="312" y="0" width="145" height="20" forecolor="#FFFFFF"/><box leftPadding="6" rightPadding="6"/><textElement textAlignment="Left" verticalAlignment="Middle"><font fontName="SansSerif" size="8.5" isBold="true" pdfEncoding="Cp1252"/></textElement><text><![CDATA[Correo]]></text></staticText>
+			<staticText><reportElement x="457" y="0" width="82" height="20" forecolor="#FFFFFF"/><box leftPadding="6" rightPadding="6"/><textElement textAlignment="Left" verticalAlignment="Middle"><font fontName="SansSerif" size="8.5" isBold="true" pdfEncoding="Cp1252"/></textElement><text><![CDATA[Teléfono]]></text></staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="18" splitType="Prevent">
+			<rectangle><reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="539" height="18" forecolor="#F3F5F8" backcolor="#F3F5F8"><printWhenExpression><![CDATA[$V{REPORT_COUNT} % 2 == 0]]></printWhenExpression></reportElement><graphicElement><pen lineWidth="0.0"/></graphicElement></rectangle>
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true"><reportElement x="0" y="0" width="44" height="18" stretchType="RelativeToTallestObject"/><box topPadding="3" leftPadding="6" bottomPadding="3" rightPadding="6"/><textElement textAlignment="Left" verticalAlignment="Middle"><font fontName="SansSerif" size="8.5" isBold="false" pdfEncoding="Cp1252"/></textElement><textFieldExpression><![CDATA[$F{id_persona}]]></textFieldExpression></textField>
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true"><reportElement x="44" y="0" width="92" height="18" stretchType="RelativeToTallestObject"/><box topPadding="3" leftPadding="6" bottomPadding="3" rightPadding="6"/><textElement textAlignment="Left" verticalAlignment="Middle"><font fontName="SansSerif" size="8.5" isBold="false" pdfEncoding="Cp1252"/></textElement><textFieldExpression><![CDATA[$F{nombre} == null || $F{nombre}.trim().isEmpty() ? "—" : $F{nombre}]]></textFieldExpression></textField>
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true"><reportElement x="136" y="0" width="104" height="18" stretchType="RelativeToTallestObject"/><box topPadding="3" leftPadding="6" bottomPadding="3" rightPadding="6"/><textElement textAlignment="Left" verticalAlignment="Middle"><font fontName="SansSerif" size="8.5" isBold="false" pdfEncoding="Cp1252"/></textElement><textFieldExpression><![CDATA[$F{apellido} == null || $F{apellido}.trim().isEmpty() ? "—" : $F{apellido}]]></textFieldExpression></textField>
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true"><reportElement x="240" y="0" width="72" height="18" stretchType="RelativeToTallestObject"/><box topPadding="3" leftPadding="6" bottomPadding="3" rightPadding="6"/><textElement textAlignment="Left" verticalAlignment="Middle"><font fontName="SansSerif" size="8.5" isBold="false" pdfEncoding="Cp1252"/></textElement><textFieldExpression><![CDATA[$F{documento} == null || $F{documento}.trim().isEmpty() ? "—" : $F{documento}]]></textFieldExpression></textField>
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true"><reportElement x="312" y="0" width="145" height="18" stretchType="RelativeToTallestObject"/><box topPadding="3" leftPadding="6" bottomPadding="3" rightPadding="6"/><textElement textAlignment="Left" verticalAlignment="Middle"><font fontName="SansSerif" size="8.5" isBold="false" pdfEncoding="Cp1252"/></textElement><textFieldExpression><![CDATA[$F{correo} == null || $F{correo}.trim().isEmpty() ? "—" : $F{correo}]]></textFieldExpression></textField>
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true"><reportElement x="457" y="0" width="82" height="18" stretchType="RelativeToTallestObject"/><box topPadding="3" leftPadding="6" bottomPadding="3" rightPadding="6"/><textElement textAlignment="Left" verticalAlignment="Middle"><font fontName="SansSerif" size="8.5" isBold="false" pdfEncoding="Cp1252"/></textElement><textFieldExpression><![CDATA[$F{telefono} == null || $F{telefono}.trim().isEmpty() ? "—" : $F{telefono}]]></textFieldExpression></textField>
+			<line><reportElement positionType="FixRelativeToBottom" x="0" y="17" width="539" height="1" forecolor="#DDE2EA"/><graphicElement><pen lineWidth="0.5" lineColor="#DDE2EA"/></graphicElement></line>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="22" splitType="Stretch">
+			<line><reportElement x="0" y="4" width="539" height="1" forecolor="#DDE2EA"/><graphicElement><pen lineWidth="0.5" lineColor="#DDE2EA"/></graphicElement></line>
+			<staticText><reportElement x="0" y="8" width="419" height="12" forecolor="#56637A"/><textElement verticalAlignment="Middle"><font fontName="SansSerif" size="7.5" isBold="false" pdfEncoding="Cp1252"/></textElement><text><![CDATA[CTA Support — Sistema de Soporte Técnico]]></text></staticText>
+			<textField><reportElement x="419" y="8" width="95" height="12" forecolor="#56637A"/><textElement textAlignment="Right" verticalAlignment="Middle"><font fontName="SansSerif" size="7.5" isBold="false" pdfEncoding="Cp1252"/></textElement><textFieldExpression><![CDATA["Página " + $V{PAGE_NUMBER} + " de"]]></textFieldExpression></textField>
+			<textField evaluationTime="Report"><reportElement x="514" y="8" width="25" height="12" forecolor="#56637A"/><textElement verticalAlignment="Middle"><font fontName="SansSerif" size="7.5" isBold="false" pdfEncoding="Cp1252"/></textElement><textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression></textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band height="36" splitType="Prevent">
+			<line><reportElement x="0" y="0" width="539" height="1" forecolor="#14284B"/><graphicElement><pen lineWidth="1.0" lineColor="#14284B"/></graphicElement></line>
+			<textField><reportElement x="6" y="6" width="527" height="16" forecolor="#14284B"/><textElement verticalAlignment="Middle"><font fontName="SansSerif" size="9.5" isBold="true" pdfEncoding="Cp1252"/></textElement><textFieldExpression><![CDATA[$V{totalRegistros} == 0 ? "No hay registros para mostrar." : "Total: " + $V{totalRegistros} + ($V{totalRegistros} == 1 ? " persona" : " personas")]]></textFieldExpression></textField>
+		</band>
+	</summary>
+</jasperReport>
